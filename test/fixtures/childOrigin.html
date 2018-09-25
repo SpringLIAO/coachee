@@ -13,13 +13,13 @@
         console.error(event);
       });
     </script>
-    <script type="text/javascript" src="penpal.js"></script>
+    <script type="text/javascript" src="coachee.js"></script>
     <script type="text/javascript">
       // A cheap way to get the parent origin for our tests.
       var parentOrigin = document.referrer.substring(0, document.referrer.lastIndexOf('/'));
 
-      Penpal.Promise = RSVP.Promise;
-      Penpal.debug = true;
+      Coachee.Promise = RSVP.Promise;
+      Coachee.debug = true;
 
       var methods = {
         multiply: function(num1, num2) {
@@ -27,7 +27,7 @@
         }
       };
 
-      Penpal.connectToParent({
+      Coachee.connectToParent({
         parentOrigin: parentOrigin,
         methods: methods
       });

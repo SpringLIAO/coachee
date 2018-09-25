@@ -13,10 +13,10 @@
         console.error(event);
       });
     </script>
-    <script type="text/javascript" src="penpal.js"></script>
+    <script type="text/javascript" src="coachee.js"></script>
     <script type="text/javascript">
-      Penpal.Promise = RSVP.Promise;
-      Penpal.debug = true;
+      Coachee.Promise = RSVP.Promise;
+      Coachee.debug = true;
 
       var parentAPI;
 
@@ -26,7 +26,7 @@
         }
       };
 
-      Penpal.connectToParent({
+      Coachee.connectToParent({
         methods: methods
       }).promise.then(function(parent) {
         parentAPI = parent;

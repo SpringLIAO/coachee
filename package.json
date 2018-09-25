@@ -1,15 +1,15 @@
 {
-  "name": "penpal",
-  "version": "3.0.3",
+  "name": "coachee",
+  "version": "3.0.4",
   "description": "A promise-based library for communicating with iframes via postMessage.",
-  "author": "Aaron Hardy <aaron@aaronhardy.com>",
+  "author": "SpringLIAO <389055604@qq.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Aaronius/penpal/issues"
+    "url": "https://github.com/SpringLIAO/coachee/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aaronius/penpal.git"
+    "url": "git+https://github.com/SpringLIAO/coachee.git"
   },
   "keywords": [
     "iframe",
@@ -19,7 +19,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "./scripts/build.js",
+    "build": "node ./scripts/build.js",
     "build:watch": "npm run build -- --watch",
     "lint": "eslint src/**",
     "test": "npm run build && ./scripts/test.js",

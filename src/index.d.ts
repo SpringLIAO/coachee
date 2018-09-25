@@ -1,4 +1,4 @@
-declare namespace Penpal {
+declare namespace Coachee {
 
   interface IConnectionObject {
     promise: Promise<any>;
@@ -25,13 +25,14 @@ declare namespace Penpal {
   interface IChildConnectionOptions extends IConnectionOptions {
     url: string;
     appendTo?: HTMLElement;
+    iframe?: HTMLElement;
   }
 
   interface IParentConnectionOptions extends IConnectionOptions {
     parentOrigin?: string;
   }
 
-  interface PenpalStatic {
+  interface CoacheeStatic {
     connectToChild(options: IChildConnectionOptions): IChildConnectionObject;
     connectToParent(options?: IParentConnectionOptions): IConnectionObject;
     Promise: typeof Promise;
@@ -42,10 +43,10 @@ declare namespace Penpal {
   }
 }
 
-declare module 'penpal' {
-  const Penpal: Penpal.PenpalStatic;
-  export default Penpal;
-  export const ERR_CONNECTION_DESTROYED: Penpal.ERR_CONNECTION_DESTROYED;
-  export const ERR_CONNECTION_TIMEOUT: Penpal.ERR_CONNECTION_TIMEOUT;
-  export const ERR_NOT_IN_IFRAME: Penpal.ERR_NOT_IN_IFRAME;
+declare module 'coachee' {
+  const Coachee: Coachee.CoacheeStatic;
+  export default Coachee;
+  export const ERR_CONNECTION_DESTROYED: Coachee.ERR_CONNECTION_DESTROYED;
+  export const ERR_CONNECTION_TIMEOUT: Coachee.ERR_CONNECTION_TIMEOUT;
+  export const ERR_NOT_IN_IFRAME: Coachee.ERR_NOT_IN_IFRAME;
 }

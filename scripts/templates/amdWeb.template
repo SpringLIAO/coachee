@@ -5,10 +5,10 @@
 
   if (typeof define === 'function' && define.amd) {
     // AMD
-    define('Penpal', exports.default);
+    define('Coachee', exports.default);
   } else {
     // Browser global
-    root.Penpal = exports.default;
+    root.Coachee = exports.default;
   }
 }(this, function (exports) {
 

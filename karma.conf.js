@@ -83,7 +83,7 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
     files: [
       require.resolve('rsvp/dist/rsvp.min.js'),
-      'dist/penpal.js',
+      'dist/coachee.js',
       'test/index.js',
     ],
     plugins: [
@@ -101,7 +101,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     sauceLabs: {
-      testName: 'Penpal Karma Test',
+      testName: 'Coachee Karma Test',
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
       startConnect: startConnect
     },

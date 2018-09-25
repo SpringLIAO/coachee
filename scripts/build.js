@@ -45,10 +45,10 @@ const build = () => {
 
             async.parallel([
               (callback) => {
-                fs.writeFile(path.join(distDir, 'penpal.js'), umdWrappedCode, callback);
+                fs.writeFile(path.join(distDir, 'coachee.js'), umdWrappedCode, callback);
               },
               (callback) => {
-                fs.writeFile(path.join(distDir, 'penpal.min.js'), uglifiedCode, callback);
+                fs.writeFile(path.join(distDir, 'coachee.min.js'), uglifiedCode, callback);
               }
             ], callback);
           });

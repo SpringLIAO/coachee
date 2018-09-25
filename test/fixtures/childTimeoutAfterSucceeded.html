@@ -13,12 +13,12 @@
         console.error(event);
       });
     </script>
-    <script type="text/javascript" src="penpal.js"></script>
+    <script type="text/javascript" src="coachee.js"></script>
     <script type="text/javascript">
-      Penpal.Promise = RSVP.Promise;
-      Penpal.debug = true;
+      Coachee.Promise = RSVP.Promise;
+      Coachee.debug = true;
 
-      Penpal.connectToParent({
+      Coachee.connectToParent({
         timeout: 30
       }).promise.then(function(parent) {
         setTimeout(function() {

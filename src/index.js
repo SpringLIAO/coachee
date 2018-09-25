@@ -18,7 +18,7 @@ const DEFAULT_PORTS = {
 
 const URL_REGEX = /^(https?:)?\/\/([^\/:]+)(:(\d+))?/;
 
-const Penpal = {
+const Coachee = {
   ERR_CONNECTION_DESTROYED,
   ERR_CONNECTION_TIMEOUT,
   ERR_NOT_IN_IFRAME,
@@ -54,8 +54,8 @@ const generateId = (() => {
  * @param {...*} args One or more items to log
  */
 const log = (...args) => {
-  if (Penpal.debug) {
-    console.log('[Penpal]', ...args); // eslint-disable-line no-console
+  if (Coachee.debug) {
+    console.log('[Coachee]', ...args); // eslint-disable-line no-console
   }
 };
 
@@ -138,7 +138,7 @@ const deserializeError = (obj) => {
  * @param {Object} callSender Sender object that should be augmented with methods.
  * @param {Object} info Information about the local and remote windows.
  * @param {Array} methodNames Names of methods available to be called on the remote.
- * @param {Promise} destructionPromise A promise resolved when destroy() is called on the penpal
+ * @param {Promise} destructionPromise A promise resolved when destroy() is called on the coachee
  * connection.
  * @returns {Object} The call sender object with methods that may be called.
  */
@@ -159,12 +159,12 @@ const connectCallSender = (callSender, info, methodNames, destructionPromise) =>
         throw error;
       }
 
-      return new Penpal.Promise((resolve, reject) => {
+      return new Coachee.Promise((resolve, reject) => {
         const id = generateId();
         const handleMessageEvent = (event) => {
           if (event.source === remote &&
               event.origin === remoteOrigin &&
-              event.data.penpal === REPLY &&
+              event.data.coachee === REPLY &&
               event.data.id === id) {
             log(`${localName}: Received ${methodName}() reply`);
             local.removeEventListener(MESSAGE, handleMessageEvent);
@@ -181,7 +181,7 @@ const connectCallSender = (callSender, info, methodNames, destructionPromise) =>
 
         local.addEventListener(MESSAGE, handleMessageEvent);
         remote.postMessage({
-          penpal: CALL,
+          coachee: CALL,
           id,
           methodName,
           args
@@ -206,7 +206,7 @@ const connectCallSender = (callSender, info, methodNames, destructionPromise) =>
  * @param {Object} info Information about the local and remote windows.
  * @param {Object} methods The keys are the names of the methods that can be called by the remote
  * while the values are the method functions.
- * @param {Promise} destructionPromise A promise resolved when destroy() is called on the penpal
+ * @param {Promise} destructionPromise A promise resolved when destroy() is called on the coachee
  * connection.
  * @returns {Function} A function that may be called to disconnect the receiver.
  */
@@ -219,7 +219,7 @@ const connectCallReceiver = (info, methods, destructionPromise) => {
   const handleMessageEvent = (event) => {
     if (event.source === remote &&
         event.origin === remoteOrigin &&
-        event.data.penpal === CALL) {
+        event.data.coachee === CALL) {
       const { methodName, args, id } = event.data;
 
       log(`${localName}: Received ${methodName}() call`);
@@ -240,7 +240,7 @@ const connectCallReceiver = (info, methods, destructionPromise) => {
             }
 
             const message = {
-              penpal: REPLY,
+              coachee: REPLY,
               id,
               resolution,
               returnValue,
@@ -258,7 +258,7 @@ const connectCallReceiver = (info, methods, destructionPromise) => {
               // we want to ensure the receiver's promise gets rejected.
               if (err.name === DATA_CLONE_ERROR) {
                 remote.postMessage({
-                  penpal: REPLY,
+                  coachee: REPLY,
                   id,
                   resolution: REJECTED,
                   returnValue: serializeError(err),
@@ -271,7 +271,7 @@ const connectCallReceiver = (info, methods, destructionPromise) => {
           };
         };
 
-        new Penpal.Promise(resolve => resolve(methods[methodName].apply(methods, args)))
+        new Coachee.Promise(resolve => resolve(methods[methodName].apply(methods, args)))
           .then(createPromiseHandler(FULFILLED), createPromiseHandler(REJECTED));
       }
     }
@@ -300,12 +300,13 @@ const connectCallReceiver = (info, methods, destructionPromise) => {
  * @param {Object} options
  * @param {string} options.url The URL of the webpage that should be loaded into the created iframe.
  * @param {HTMLElement} [options.appendTo] The container to which the iframe should be appended.
+ * @param {HTMLElement} [options.iframe] Iframe element to use instead to create one new.
  * @param {Object} [options.methods={}] Methods that may be called by the iframe.
- * @param {Number} [options.timeout] The amount of time, in milliseconds, Penpal should wait
+ * @param {Number} [options.timeout] The amount of time, in milliseconds, Coachee should wait
  * for the child to respond before rejecting the connection promise.
  * @return {Child}
  */
-Penpal.connectToChild = ({ url, appendTo, methods = {}, timeout }) => {
+Coachee.connectToChild = ({ url, appendTo, iframe, methods = {}, timeout }) => {
   let destroy;
   const connectionDestructionPromise = new DestructionPromise(
     (resolveConnectionDestructionPromise) => {
@@ -314,7 +315,8 @@ Penpal.connectToChild = ({ url, appendTo, methods = {}, timeout }) => {
   );
 
   const parent = window;
-  const iframe = document.createElement('iframe');
+  // const iframe = document.createElement('iframe');
+  iframe = iframe || document.createElement('iframe');
 
   (appendTo || document.body).appendChild(iframe);
 
@@ -326,7 +328,7 @@ Penpal.connectToChild = ({ url, appendTo, methods = {}, timeout }) => {
 
   const child = iframe.contentWindow || iframe.contentDocument.parentWindow;
   const childOrigin = getOriginFromUrl(url);
-  const promise = new Penpal.Promise((resolveConnectionPromise, reject) => {
+  const promise = new Coachee.Promise((resolveConnectionPromise, reject) => {
     let connectionTimeoutId;
 
     if (timeout !== undefined) {
@@ -339,7 +341,7 @@ Penpal.connectToChild = ({ url, appendTo, methods = {}, timeout }) => {
     }
 
     // We resolve the promise with the call sender. If the child reconnects (for example, after
-    // refreshing or navigating to another page that uses Penpal, we'll update the call sender
+    // refreshing or navigating to another page that uses Coachee, we'll update the call sender
     // with methods that match the latest provided by the child.
     const callSender = {};
     let receiverMethodNames;
@@ -349,11 +351,11 @@ Penpal.connectToChild = ({ url, appendTo, methods = {}, timeout }) => {
     const handleMessage = (event) => {
       if (event.source === child &&
           event.origin === childOrigin &&
-          event.data.penpal === HANDSHAKE) {
+          event.data.coachee === HANDSHAKE) {
         log('Parent: Received handshake, sending reply');
 
         event.source.postMessage({
-          penpal: HANDSHAKE_REPLY,
+          coachee: HANDSHAKE_REPLY,
           methodNames: Object.keys(methods)
         }, event.origin);
 
@@ -427,11 +429,11 @@ Penpal.connectToChild = ({ url, appendTo, methods = {}, timeout }) => {
  * @param {Object} options
  * @param {string} [options.parentOrigin=*] Valid parent origin used to restrict communication.
  * @param {Object} [options.methods={}] Methods that may be called by the parent window.
- * @param {Number} [options.timeout] The amount of time, in milliseconds, Penpal should wait
+ * @param {Number} [options.timeout] The amount of time, in milliseconds, Coachee should wait
  * for the parent to respond before rejecting the connection promise.
  * @return {Parent}
  */
-Penpal.connectToParent = ({ parentOrigin = '*', methods = {}, timeout } = {}) => {
+Coachee.connectToParent = ({ parentOrigin = '*', methods = {}, timeout } = {}) => {
   if (window === window.top) {
     const error = new Error('connectToParent() must be called within an iframe');
     error.code = ERR_NOT_IN_IFRAME;
@@ -448,7 +450,7 @@ Penpal.connectToParent = ({ parentOrigin = '*', methods = {}, timeout } = {}) =>
   const child = window;
   const parent = child.parent;
 
-  const promise = new Penpal.Promise((resolveConnectionPromise, reject) => {
+  const promise = new Coachee.Promise((resolveConnectionPromise, reject) => {
     let connectionTimeoutId;
 
     if (timeout !== undefined) {
@@ -464,7 +466,7 @@ Penpal.connectToParent = ({ parentOrigin = '*', methods = {}, timeout } = {}) =>
       if ((parentOrigin === '*' ||
           parentOrigin === event.origin) &&
           event.source === parent &&
-          event.data.penpal === HANDSHAKE_REPLY) {
+          event.data.coachee === HANDSHAKE_REPLY) {
         log('Child: Received handshake reply');
 
         child.removeEventListener(MESSAGE, handleMessageEvent);
@@ -498,7 +500,7 @@ Penpal.connectToParent = ({ parentOrigin = '*', methods = {}, timeout } = {}) =>
     log('Child: Sending handshake');
 
     parent.postMessage({
-      penpal: HANDSHAKE,
+      coachee: HANDSHAKE,
       methodNames: Object.keys(methods),
     }, parentOrigin);
   });
@@ -509,4 +511,4 @@ Penpal.connectToParent = ({ parentOrigin = '*', methods = {}, timeout } = {}) =>
   };
 };
 
-export default Penpal;
+export default Coachee;

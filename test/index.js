@@ -1,13 +1,13 @@
 const CHILD_SERVER = `http://${window.location.hostname}:9000`;
 
-describe('Penpal', () => {
+describe('Coachee', () => {
   beforeAll(() => {
-    Penpal.Promise = RSVP.Promise;
-    Penpal.debug = false; // Set to true when debugging tests.
+    Coachee.Promise = RSVP.Promise;
+    Coachee.debug = false; // Set to true when debugging tests.
   });
 
   it('completes a handshake', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`
     });
 
@@ -18,7 +18,7 @@ describe('Penpal', () => {
   });
 
   it('creates an iframe and add it to document.body', () => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`
     });
 
@@ -31,7 +31,7 @@ describe('Penpal', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
       appendTo: container
     });
@@ -42,7 +42,7 @@ describe('Penpal', () => {
   });
 
   it('calls a function on the child', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`
     });
 
@@ -56,7 +56,7 @@ describe('Penpal', () => {
   });
   
   it('calls a function on the child with origin set', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/childOrigin.html`
     });
 
@@ -70,7 +70,7 @@ describe('Penpal', () => {
   });
 
   it('calls an asynchronous function on the child', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`
     });
 
@@ -84,7 +84,7 @@ describe('Penpal', () => {
   });
 
   it('calls a function on the parent', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
       methods: {
         add: (num1, num2) => {
@@ -105,7 +105,7 @@ describe('Penpal', () => {
   });
 
   it('handles promises rejected with strings', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
     });
 
@@ -119,7 +119,7 @@ describe('Penpal', () => {
   });
 
   it('handles promises rejected with error objects', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
     });
 
@@ -138,7 +138,7 @@ describe('Penpal', () => {
   });
 
   it('handles thrown errors', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
     });
 
@@ -153,7 +153,7 @@ describe('Penpal', () => {
   });
 
   it('handles unclonable values', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
     });
 
@@ -168,7 +168,7 @@ describe('Penpal', () => {
   });
 
   it('doesn\'t connect to iframe connecting to parent with different origin', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/childDiffOrigin.html`
     });
 
@@ -177,7 +177,7 @@ describe('Penpal', () => {
     connection.promise.then(spy);
 
     connection.iframe.addEventListener('load', function() {
-      // Give Penpal time to try to make a handshake.
+      // Give Coachee time to try to make a handshake.
       setTimeout(() => {
         expect(spy).not.toHaveBeenCalled();
         done();
@@ -186,7 +186,7 @@ describe('Penpal', () => {
   });
 
   it('reconnects after child reloads', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`
     });
 
@@ -215,7 +215,7 @@ describe('Penpal', () => {
       return num1 + num2;
     });
 
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
       methods: {
         add
@@ -242,7 +242,7 @@ describe('Penpal', () => {
   });
 
   it('reconnects after child navigates to other page with different methods', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`
     });
 
@@ -265,7 +265,7 @@ describe('Penpal', () => {
   });
 
   it('rejects promise if connectToChild times out', (done) => {
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
       timeout: 0
     });
@@ -273,7 +273,7 @@ describe('Penpal', () => {
     connection.promise.catch((error) => {
       expect(error).toEqual(jasmine.any(Error));
       expect(error.message).toBe('Connection to child timed out after 0ms');
-      expect(error.code).toBe(Penpal.ERR_CONNECTION_TIMEOUT);
+      expect(error.code).toBe(Coachee.ERR_CONNECTION_TIMEOUT);
       done();
     });
   });
@@ -282,7 +282,7 @@ describe('Penpal', () => {
     'timeout passes (connectToChild)', (done) => {
     jasmine.clock().install();
 
-    const connection = Penpal.connectToChild({
+    const connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/child.html`,
       timeout: 100000
     });
@@ -301,7 +301,7 @@ describe('Penpal', () => {
   it('doesn\'t destroy connection if connection succeeds then ' +
     'timeout passes (connectToParent)', (done) => {
 
-    var connection = Penpal.connectToChild({
+    var connection = Coachee.connectToChild({
       url: `${CHILD_SERVER}/childTimeoutAfterSucceeded.html`,
       methods: {
         reportStillConnected() {
@@ -313,14 +313,14 @@ describe('Penpal', () => {
   });
 
   it('rejects promise if connectToParent times out', (done) => {
-    const connection = Penpal.connectToParent({
+    const connection = Coachee.connectToParent({
       timeout: 0
     });
 
     connection.promise.catch((error) => {
       expect(error).toEqual(jasmine.any(Error));
       expect(error.message).toBe('Connection to parent timed out after 0ms');
-      expect(error.code).toBe(Penpal.ERR_CONNECTION_TIMEOUT);
+      expect(error.code).toBe(Coachee.ERR_CONNECTION_TIMEOUT);
       connection.destroy();
       done();
     });
@@ -328,7 +328,7 @@ describe('Penpal', () => {
 
   describe('destroy', () => {
     it('removes iframe from its parent', (done) => {
-      const connection = Penpal.connectToChild({
+      const connection = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
 
@@ -339,14 +339,14 @@ describe('Penpal', () => {
     });
 
     it('rejects promise', (done) => {
-      const connection = Penpal.connectToChild({
+      const connection = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
 
       connection.promise.catch((error) => {
         expect(error).toEqual(jasmine.any(Error));
         expect(error.message).toBe('Connection destroyed');
-        expect(error.code).toBe(Penpal.ERR_CONNECTION_DESTROYED);
+        expect(error.code).toBe(Coachee.ERR_CONNECTION_DESTROYED);
         done();
       });
 
@@ -360,7 +360,7 @@ describe('Penpal', () => {
       spyOn(window, 'addEventListener').and.callThrough();
       spyOn(window, 'removeEventListener').and.callThrough();
 
-      const connection = Penpal.connectToChild({
+      const connection = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
 
@@ -381,7 +381,7 @@ describe('Penpal', () => {
       spyOn(window, 'addEventListener').and.callThrough();
       spyOn(window, 'removeEventListener').and.callThrough();
 
-      const connection = Penpal.connectToChild({
+      const connection = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
 
@@ -398,7 +398,7 @@ describe('Penpal', () => {
     });
 
     it('prevents method calls from being sent', (done) => {
-      const connection = Penpal.connectToChild({
+      const connection = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
 
@@ -411,17 +411,17 @@ describe('Penpal', () => {
         } catch (error) {
           expect(error).toEqual(jasmine.any(Error));
           expect(error.message).toBe('Unable to send multiply() call due to destroyed connection');
-          expect(error.code).toBe(Penpal.ERR_CONNECTION_DESTROYED);
+          expect(error.code).toBe(Coachee.ERR_CONNECTION_DESTROYED);
           done();
         }
       });
     });
 
     it('supports multiple connections', (done) => {
-      const connection1 = Penpal.connectToChild({
+      const connection1 = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
-      const connection2 = Penpal.connectToChild({
+      const connection2 = Coachee.connectToChild({
         url: `${CHILD_SERVER}/child.html`
       });
 
