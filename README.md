@@ -89,7 +89,9 @@ connection.promise.then(parent => {
 
 `options.url` (required) The URL of the webpage that should be loaded into the iframe that Coachee will create. A relative path is also supported.
 
-`options.appendTo` (optional) The element to which the created iframe should be appended. If not provided, the iframe will be appended to `document.body`.
+`options.iframe` (optional) The iframe element. It would be querySelector string or a htmlElement Object. If not provided, would create one new by default.
+
+`options.appendTo` (optional) The element to which the created iframe should be appended. If not provided, the iframe will be appended to `document.body`. If set `options.iframe`, this not work.
 
 `options.methods` (optional) An object containing methods which should be exposed for the child iframe to call. The keys of the object are the method names and the values are the functions. If a function requires asynchronous processing to determine its return value, make the function immediately return a promise and resolve the promise once the value has been determined.
 

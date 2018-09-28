@@ -1,6 +1,6 @@
 {
   "name": "coachee",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "A promise-based library for communicating with iframes via postMessage.",
   "author": "SpringLIAO <389055604@qq.com>",
   "license": "MIT",

@@ -59,6 +59,11 @@ const log = (...args) => {
   }
 };
 
+const isDOM = (typeof HTMLElement === 'object') ?
+    obj => obj instanceof HTMLElement
+    :
+    obj => obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.nodeName === 'string';
+
 /**
  * Converts a URL into an origin.
  * @param {string} url
@@ -316,9 +321,11 @@ Coachee.connectToChild = ({ url, appendTo, iframe, methods = {}, timeout }) => {
 
   const parent = window;
   // const iframe = document.createElement('iframe');
-  iframe = iframe || document.createElement('iframe');
-
-  (appendTo || document.body).appendChild(iframe);
+  if (typeof iframe === 'string') iframe = document.querySelector(iframe);
+  if (!isDOM(iframe)) {
+    iframe = document.createElement('iframe');
+    (appendTo || document.body).appendChild(iframe);
+  }
 
   connectionDestructionPromise.then(() => {
     if (iframe.parentNode) {
